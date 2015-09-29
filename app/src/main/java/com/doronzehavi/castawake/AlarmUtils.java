@@ -17,7 +17,12 @@
 package com.doronzehavi.castawake;
 
 import android.content.Context;
+import android.os.Build;
+import android.text.format.DateFormat;
 import android.widget.Toast;
+
+import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Static utility methods for Alarms.
@@ -25,6 +30,16 @@ import android.widget.Toast;
 public class AlarmUtils {
     public static final String FRAG_TAG_TIME_PICKER = "time_dialog";
 
+    public static String getFormattedTime(Context context, Calendar time) {
+        // String skeleton = DateFormat.is24HourFormat(context) ? "EHm" : "Ehma";
+        String skeleton = DateFormat.is24HourFormat(context) ? "Hm" : "hma";
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            String pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), skeleton);
+            return (String) DateFormat.format(pattern, time);
+        }
+        else
+            return (String) DateFormat.format(skeleton, time);
+    }
 
     /**
      * format "Alarm set for 2 days 7 hours and 53 minutes from
