@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="nav_item_icon_tint_color">#333</color>
+    <color name="nav_item_text_color">#333</color>
+    <color name="window_background">#28ffffff</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF5722</color>
+    <color name="black_overlay">#66000000</color>
+    <color name="white_69p">#B1FFFFFF</color>
+    <color name="hot_pink">#FF4081</color>
+    <color name="clock_white">#ffffff</color>
+    <color name="white">#ffffffff</color>
+    <color name="hairline">#28ffffff</color>
+    <color name="clock_gray">#B3ffffff</color>
+    <color name="time_picker_gray">#212121</color>
+    <color name="blackish_selected">#0cffffff</color>
+    <color name="default_background">#5c6bc0</color>
+
+
+
+
+
+</resources>

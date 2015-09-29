@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">CastAwake</string>
+    <string name="action_settings">Settings</string>
+    <string name="no_alarms">No Alarms</string>
+    <string name="never">Never</string>
+    <string name="every_day">Every day</string>
+    <string name="day_concat">\", \"</string>
+    <string name="day">1 day</string>
+    <string name="days">${days}</string>
+    <string name="minute">1 minute</string>
+    <string name="minutes">${minutes} minutes</string>
+    <string name="hour">1 hour</string>
+    <string name="hours">${hours} hours</string>
+</resources>

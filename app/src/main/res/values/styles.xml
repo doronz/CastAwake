@@ -1,0 +1,16 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="no_alarms">
+        <item name="android:textSize">@dimen/no_alarm_font_size</item>
+        <item name="android:textColor">@color/white_69p</item>
+    </style>
+    <style name="floating_action_button">
+        <item name="android:layout_margin">0dp</item>
+    </style>
+
+</resources>
