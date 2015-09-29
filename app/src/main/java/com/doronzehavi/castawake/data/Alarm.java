@@ -138,7 +138,9 @@ public class Alarm implements AlarmContract.AlarmEntry {
     public static long getId(Uri contentUri) {
         return ContentUris.parseId(contentUri);
     }
-
+    public static Uri getUri(long alarmId) {
+        return ContentUris.withAppendedId(CONTENT_URI, alarmId);
+    }
 
     public static ContentValues createContentValues(Alarm alarm) {
         ContentValues values = new ContentValues(COLUMN_COUNT);
@@ -176,5 +178,11 @@ public class Alarm implements AlarmContract.AlarmEntry {
                 ", label='" + label + '\'' +
                 ", deleteAfterUse=" + deleteAfterUse +
                 '}';
+    }
+
+    public static boolean deleteAlarm(ContentResolver contentResolver, long alarmId) {
+        if (alarmId == INVALID_ID) return false;
+        int deletedRows = contentResolver.delete(getUri(alarmId), "", null);
+        return deletedRows == 1;
     }
 }

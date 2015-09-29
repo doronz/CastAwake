@@ -16,6 +16,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.doronzehavi.castawake.data.Alarm;
@@ -44,6 +45,16 @@ public class AlarmsListFragment extends Fragment implements
         View v = inflater.inflate(R.layout.fragment_alarms_list, container, false);
         ListView listView = (ListView) v.findViewById(R.id.alarms_list);
         listView.setAdapter(mAlarmAdapter);
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+                asyncDeleteAlarm(new Alarm(cursor));
+                return true;
+            }
+        });
+
         mFab = (FloatingActionButton) v.findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,6 +129,21 @@ public class AlarmsListFragment extends Fragment implements
                 };
         addAlarmTask.execute();
     }
+    private void asyncDeleteAlarm(final Alarm alarm) {
+        final Context context = getActivity().getApplicationContext();
+        final AsyncTask<Void, Void, Void> deleteTask = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... parameters) {
+                // Activity may be closed at this point , make sure data is still valid
+                if (context != null && alarm != null) {
+                    ContentResolver cr = context.getContentResolver();
+                    Alarm.deleteAlarm(cr, alarm.id);
+                }
+                return null;
+            }
+        };
+        deleteTask.execute();
+    }
 
     private static AlarmInstance setupAlarmInstance(Context context, Alarm alarm) {
         ContentResolver cr = context.getContentResolver();
@@ -125,4 +151,6 @@ public class AlarmsListFragment extends Fragment implements
         newInstance = AlarmInstance.addInstance(cr, newInstance);
         return newInstance;
     }
+
+
 }

@@ -11,10 +11,8 @@ import android.widget.TextView;
 
 import com.doronzehavi.castawake.AlarmUtils;
 import com.doronzehavi.castawake.R;
-import com.doronzehavi.castawake.data.AlarmContract.AlarmEntry;
 
 import java.util.Calendar;
-
 
 public class AlarmsAdapter extends CursorAdapter {
 
@@ -33,8 +31,8 @@ public class AlarmsAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         ViewHolder vh = (ViewHolder) view.getTag();
-        int hours = cursor.getInt(AlarmEntry.HOUR_INDEX);
-        int minutes = cursor.getInt(AlarmEntry.MINUTES_INDEX);
+        int hours = cursor.getInt(AlarmContract.AlarmEntry.HOUR_INDEX);
+        int minutes = cursor.getInt(AlarmContract.AlarmEntry.MINUTES_INDEX);
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, hours);
         cal.set(Calendar.MINUTE, minutes);
