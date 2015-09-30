@@ -3,22 +3,24 @@ package com.doronzehavi.castawake.data;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.media.RingtoneManager;
 import android.net.Uri;
 
 import com.doronzehavi.castawake.LogUtils;
+import com.doronzehavi.castawake.R;
 
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by D on 9/28/2015.
- */
+
 public class AlarmInstance implements AlarmContract.AlarmInstance {
     /**
      * Offset from alarm time to show low priority notification
+     *
      */
     public static final int LOW_NOTIFICATION_HOUR_OFFSET = -2;
 
@@ -194,7 +196,15 @@ public class AlarmInstance implements AlarmContract.AlarmInstance {
         return rowsUpdated == 1;
     }
 
+    public static boolean deleteInstance(ContentResolver contentResolver, long instanceId) {
+        if (instanceId == INVALID_ID) return false;
+        int deletedRows = contentResolver.delete(getUri(instanceId), "", null);
+        return deletedRows == 1;
+    }
 
+    public String getLabelOrDefault(Context context) {
+        return mLabel.isEmpty() ? context.getString(R.string.default_label) : mLabel;
+    }
     /**
      * Return the time when a alarm should fire.
      *
@@ -261,5 +271,88 @@ public class AlarmInstance implements AlarmContract.AlarmInstance {
                 ", mAlarmId=" + mAlarmId +
                 ", mAlarmState=" + mAlarmState +
                 '}';
+    }
+
+    public static Intent createIntent(Context context, Class<?> cls, long instanceId) {
+        return new Intent(context, cls).setData(getUri(instanceId));
+    }
+
+    /**
+     * Get alarm instance from instanceId.
+     *
+     * @param contentResolver to perform the query on.
+     * @param instanceId for the desired instance.
+     * @return instance if found, null otherwise
+     */
+    public static AlarmInstance getInstance(ContentResolver contentResolver, long instanceId) {
+        Cursor cursor = contentResolver.query(getUri(instanceId), QUERY_COLUMNS, null, null, null);
+        AlarmInstance result = null;
+        if (cursor == null) {
+            return result;
+        }
+
+        try {
+            if (cursor.moveToFirst()) {
+                result = new AlarmInstance(cursor);
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return result;
+    }
+
+    /**
+     * Return the time when a low priority notification should be shown.
+     *
+     * @return the time
+     */
+    public Calendar getLowNotificationTime() {
+        Calendar calendar = getAlarmTime();
+        calendar.add(Calendar.HOUR_OF_DAY, LOW_NOTIFICATION_HOUR_OFFSET);
+        return calendar;
+    }
+
+    /**
+     * Return the time when a high priority notification should be shown.
+     *
+     * @return the time
+     */
+    public Calendar getHighNotificationTime() {
+        Calendar calendar = getAlarmTime();
+        calendar.add(Calendar.MINUTE, HIGH_NOTIFICATION_MINUTE_OFFSET);
+        return calendar;
+    }
+
+    /**
+     * Return the time when a missed notification should be removed.
+     *
+     * @return the time
+     */
+    public Calendar getMissedTimeToLive() {
+        Calendar calendar = getAlarmTime();
+        calendar.add(Calendar.HOUR, MISSED_TIME_TO_LIVE_HOUR_OFFSET);
+        return calendar;
+    }
+
+    /**
+     * Return the time when the alarm should stop firing and be marked as missed.
+     *
+     * @param context to figure out the timeout setting
+     * @return the time when alarm should be silence, or null if never
+     */
+    public Calendar getTimeout(Context context) {
+//        String timeoutSetting = PreferenceManager.getDefaultSharedPreferences(context)
+//                .getString(SettingsActivity.KEY_AUTO_SILENCE, DEFAULT_ALARM_TIMEOUT_SETTING);
+//        int timeoutMinutes = Integer.parseInt(timeoutSetting);
+//
+//        // Alarm silence has been set to "None"
+//        if (timeoutMinutes < 0) {
+//            return null;
+//        }
+        int timeoutMinutes = 1;
+        Calendar calendar = getAlarmTime();
+        calendar.add(Calendar.MINUTE, timeoutMinutes);
+        return calendar;
     }
 }

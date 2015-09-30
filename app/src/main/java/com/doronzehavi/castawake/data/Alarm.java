@@ -3,6 +3,8 @@ package com.doronzehavi.castawake.data;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -165,6 +167,53 @@ public class Alarm implements AlarmContract.AlarmEntry {
         return values;
     }
 
+
+
+    public static boolean deleteAlarm(ContentResolver contentResolver, long alarmId) {
+        if (alarmId == INVALID_ID) return false;
+        int rowsDeleted = contentResolver.delete(getUri(alarmId), "", null);
+        return rowsDeleted == 1;
+    }
+
+    public static boolean updateAlarm(ContentResolver contentResolver, Alarm alarm) {
+        if (alarm.id == Alarm.INVALID_ID) return false;
+        ContentValues values = createContentValues(alarm);
+        long rowsUpdated = contentResolver.update(getUri(alarm.id), values, null, null);
+        return rowsUpdated == 1;
+    }
+
+    /**
+     * Get alarm by id.
+     *
+     * @param contentResolver to perform the query on.
+     * @param alarmId for the desired alarm.
+     * @return alarm if found, null otherwise
+     */
+    public static Alarm getAlarm(ContentResolver contentResolver, long alarmId) {
+        Cursor cursor = contentResolver.query(getUri(alarmId), QUERY_COLUMNS, null, null, null);
+        Alarm result = null;
+        if (cursor == null) {
+            return result;
+        }
+
+        try {
+            if (cursor.moveToFirst()) {
+                result = new Alarm(cursor);
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return result;
+    }
+
+    public static Intent createIntent(Context context, Class<?> cls, long alarmId) {
+        return new Intent(context, cls).setData(getUri(alarmId));
+    }
+
+
+
+
     @Override
     public String toString() {
         return "Alarm{" +
@@ -180,9 +229,4 @@ public class Alarm implements AlarmContract.AlarmEntry {
                 '}';
     }
 
-    public static boolean deleteAlarm(ContentResolver contentResolver, long alarmId) {
-        if (alarmId == INVALID_ID) return false;
-        int deletedRows = contentResolver.delete(getUri(alarmId), "", null);
-        return deletedRows == 1;
-    }
 }

@@ -16,10 +16,14 @@
 
 package com.doronzehavi.castawake;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.text.format.DateFormat;
 import android.widget.Toast;
+
+import com.doronzehavi.castawake.data.AlarmInstance;
+import com.doronzehavi.castawake.data.Utils;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -30,10 +34,11 @@ import java.util.Locale;
 public class AlarmUtils {
     public static final String FRAG_TAG_TIME_PICKER = "time_dialog";
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public static String getFormattedTime(Context context, Calendar time) {
         // String skeleton = DateFormat.is24HourFormat(context) ? "EHm" : "Ehma";
         String skeleton = DateFormat.is24HourFormat(context) ? "Hm" : "hma";
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
+        if (Utils.isAPI18OrLater()) {
             String pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), skeleton);
             return (String) DateFormat.format(pattern, time);
         }
@@ -80,5 +85,11 @@ public class AlarmUtils {
         String toastText = formatToast(context, timeInMillis);
         Toast toast = Toast.makeText(context, toastText, Toast.LENGTH_LONG);
         toast.show();
+    }
+
+    public static String getAlarmText(Context context, AlarmInstance instance) {
+        String alarmTimeStr = getFormattedTime(context, instance.getAlarmTime());
+        return !instance.mLabel.isEmpty() ? alarmTimeStr + " - " + instance.mLabel
+                : alarmTimeStr;
     }
 }
