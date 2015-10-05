@@ -19,7 +19,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.doronzehavi.castawake.data.Alarm;
@@ -27,7 +31,6 @@ import com.doronzehavi.castawake.data.AlarmContract;
 import com.doronzehavi.castawake.data.AlarmContract.AlarmEntry;
 import com.doronzehavi.castawake.data.AlarmInstance;
 import com.doronzehavi.castawake.data.AlarmStateManager;
-import com.doronzehavi.castawake.data.AlarmsAdapter;
 
 import java.util.Calendar;
 
@@ -137,6 +140,38 @@ public class AlarmsListFragment extends Fragment implements
                 };
         addAlarmTask.execute();
     }
+
+    private void asyncUpdateAlarm(final Alarm alarm, final boolean popToast) {
+        final Context context = this.getActivity().getApplicationContext();
+        final AsyncTask<Void, Void, AlarmInstance> updateTask =
+                new AsyncTask<Void, Void, AlarmInstance>() {
+                    @Override
+                    protected AlarmInstance doInBackground(Void ... parameters) {
+                        ContentResolver cr = context.getContentResolver();
+
+                        // Dismiss any old instances with same id
+                        AlarmStateManager.deleteAllInstances(context, alarm.id);
+
+                        // Update alarm
+                        Alarm.updateAlarm(cr, alarm);
+                        if (alarm.enabled) {
+                            return setupAlarmInstance(context, alarm);
+                        }
+
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(AlarmInstance instance) {
+                        if (popToast && instance != null) {
+                            AlarmUtils.popAlarmSetToast(context, instance.getAlarmTime().getTimeInMillis());
+                        }
+                    }
+                };
+        updateTask.execute();
+    }
+
+
     private void asyncDeleteAlarm(final Alarm alarm) {
         final Context context = getActivity().getApplicationContext();
         final AsyncTask<Void, Void, Void> deleteTask = new AsyncTask<Void, Void, Void>() {
@@ -175,5 +210,62 @@ public class AlarmsListFragment extends Fragment implements
         a.minutes = minute;
         a.enabled = true;
         asyncAddAlarm(a);
+    }
+
+    public class AlarmsAdapter extends CursorAdapter {
+
+        public AlarmsAdapter(Context context, Cursor c, int flags) {
+            super(context, c, flags);
+        }
+
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+            View v = LayoutInflater.from(context).inflate(R.layout.alarm_item, parent, false);
+            ViewHolder vh = new ViewHolder(v);
+            v.setTag(vh); // Used to provide access to viewholder in bindView()
+            return v;
+        }
+
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+            ViewHolder vh = (ViewHolder) view.getTag();
+            final Alarm alarm = new Alarm(cursor);
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.HOUR_OF_DAY, alarm.hour);
+            cal.set(Calendar.MINUTE, alarm.minutes);
+            vh.time.setText(AlarmUtils.getFormattedTime(context, cal));
+
+            // We must unset the listener first because this maybe a recycled view so changing the
+            // state would affect the wrong alarm.
+            vh.alarmSwitch.setOnCheckedChangeListener(null);
+            vh.alarmSwitch.setChecked(alarm.enabled);
+
+
+            final CompoundButton.OnCheckedChangeListener onOffListener =
+                    new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+                            if (checked != alarm.enabled) {
+                                alarm.enabled = checked;
+                                asyncUpdateAlarm(alarm, alarm.enabled);
+                            }
+                        }
+                    };
+            vh.alarmSwitch.setOnCheckedChangeListener(onOffListener);
+        }
+
+
+        // Viewholder pattern
+        private class ViewHolder {
+            TextView time, dayOfWeek, deleteAfterUse;
+            Switch alarmSwitch;
+
+            public ViewHolder(View view) {
+                time = (TextView) view.findViewById(R.id.time);
+                dayOfWeek = (TextView) view.findViewById(R.id.day_of_week);
+                deleteAfterUse = (TextView) view.findViewById(R.id.delete_after_use);
+                alarmSwitch = (Switch) view.findViewById(R.id.alarm_switch);
+            }
+        }
     }
 }

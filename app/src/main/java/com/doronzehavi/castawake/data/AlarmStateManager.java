@@ -607,7 +607,6 @@ public final class AlarmStateManager extends BroadcastReceiver {
      * @param context application context
      * @param alarmId to find instances to delete.
      */
-/*  TODO:
     public static void deleteAllInstances(Context context, long alarmId) {
         ContentResolver cr = context.getContentResolver();
         List<AlarmInstance> instances = AlarmInstance.getInstancesByAlarmId(cr, alarmId);
@@ -616,7 +615,7 @@ public final class AlarmStateManager extends BroadcastReceiver {
             AlarmInstance.deleteInstance(context.getContentResolver(), instance.mId);
         }
         updateNextAlarm(context);
-    }*/
+    }
 
     /**
      * Fix and update all alarm instance when a time change event occurs.
@@ -729,14 +728,15 @@ public final class AlarmStateManager extends BroadcastReceiver {
             Uri uri = intent.getData();
             AlarmInstance instance = AlarmInstance.getInstance(context.getContentResolver(),
                     AlarmInstance.getId(uri));
-/*          TODO:
+
+/*          TODO
             long alarmId = instance.mAlarmId == null ? Alarm.INVALID_ID : instance.mAlarmId;
             Intent viewAlarmIntent = Alarm.createIntent(context, DeskClock.class, alarmId);
             viewAlarmIntent.putExtra(DeskClock.SELECT_TAB_INTENT_EXTRA, DeskClock.ALARM_TAB_INDEX);
             viewAlarmIntent.putExtra(AlarmClockFragment.SCROLL_TO_ALARM_INTENT_EXTRA, alarmId);
             viewAlarmIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(viewAlarmIntent);
-            setDismissState(context, instance);*/
+            context.startActivity(viewAlarmIntent);*/
+            setDismissState(context, instance);
         }
     }
 

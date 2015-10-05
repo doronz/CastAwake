@@ -116,13 +116,12 @@ public final class AlarmNotifications {
                 .setLocalOnly(true);
 
         // Setup up dismiss action
-/*        TODO:
         Intent dismissIntent = AlarmStateManager.createStateChangeIntent(context,
                 AlarmStateManager.ALARM_DISMISS_TAG, instance, AlarmInstance.DISMISSED_STATE);
-        notification.addAction(R.drawable.ic_alarm_off_black,
+        notification.addAction(R.drawable.ic_action_dismiss,
                 resources.getString(R.string.alarm_alert_dismiss_now_text),
                 PendingIntent.getBroadcast(context, instance.hashCode(),
-                        dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT));*/
+                        dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT));
 
         // Setup content action if instance is owned by alarm
         Intent viewAlarmIntent = createViewAlarmIntent(context, instance);

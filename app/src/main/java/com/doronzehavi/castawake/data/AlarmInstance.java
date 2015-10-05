@@ -256,6 +256,23 @@ public class AlarmInstance implements AlarmContract.AlarmInstance {
         return result;
     }
 
+    /**
+     * Get an alarm instances by alarmId.
+     *
+     * @param contentResolver to perform the query on.
+     * @param alarmId of instances desired.
+     * @return list of alarms instances that are owned by alarmId.
+     */
+    public static List<AlarmInstance> getInstancesByAlarmId(ContentResolver contentResolver,
+                                                            long alarmId) {
+        return getInstances(contentResolver, ALARM_ID + "=" + alarmId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Long.valueOf(mId).hashCode();
+    }
+
     @Override
     public String toString() {
         return "AlarmInstance{" +
