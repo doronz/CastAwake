@@ -33,10 +33,12 @@ public class AlarmsAdapter extends CursorAdapter {
         ViewHolder vh = (ViewHolder) view.getTag();
         int hours = cursor.getInt(AlarmContract.AlarmEntry.HOUR_INDEX);
         int minutes = cursor.getInt(AlarmContract.AlarmEntry.MINUTES_INDEX);
+        boolean enabled = cursor.getInt(AlarmContract.AlarmEntry.ENABLED_INDEX) == 1;
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, hours);
         cal.set(Calendar.MINUTE, minutes);
         vh.time.setText(AlarmUtils.getFormattedTime(context, cal));
+        vh.alarmSwitch.setChecked(enabled);
     }
 
 

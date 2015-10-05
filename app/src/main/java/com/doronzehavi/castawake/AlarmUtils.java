@@ -17,11 +17,16 @@
 package com.doronzehavi.castawake;
 
 import android.annotation.TargetApi;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Build;
 import android.text.format.DateFormat;
 import android.widget.Toast;
 
+import com.doronzehavi.castawake.data.Alarm;
 import com.doronzehavi.castawake.data.AlarmInstance;
 import com.doronzehavi.castawake.data.Utils;
 
@@ -91,5 +96,28 @@ public class AlarmUtils {
         String alarmTimeStr = getFormattedTime(context, instance.getAlarmTime());
         return !instance.mLabel.isEmpty() ? alarmTimeStr + " - " + instance.mLabel
                 : alarmTimeStr;
+    }
+
+    /**
+     * Show the time picker dialog. This is called from AlarmClockFragment to set alarm.
+     * @param fragment The calling fragment (which is also a onTimeSetListener),
+     *                 we use it as the target fragment of the TimePickerFragment, so later the
+     *                 latter can retrieve it and set it as its onTimeSetListener when the fragment
+     *                 is recreated.
+     * @param alarm The clicked alarm, it can be null if user was clicking the fab instead.
+     */
+    public static void showTimeEditDialog(Fragment fragment, final Alarm alarm) {
+        final FragmentManager manager = fragment.getFragmentManager();
+        final FragmentTransaction ft = manager.beginTransaction();
+        final Fragment prev = manager.findFragmentByTag(FRAG_TAG_TIME_PICKER);
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.commit();
+        final TimePickerFragment timePickerFragment = new TimePickerFragment();
+        timePickerFragment.setTargetFragment(fragment, 0);
+        timePickerFragment.setOnTimeSetListener((TimePickerDialog.OnTimeSetListener) fragment);
+        timePickerFragment.setAlarm(alarm);
+        timePickerFragment.show(manager, FRAG_TAG_TIME_PICKER);
     }
 }
