@@ -223,8 +223,8 @@ public final class AlarmNotifications {
                 .setCategory(Notification.CATEGORY_ALARM)
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setLocalOnly(true);
-/*
-TODO:
+
+/*      TODO
         // Setup Snooze Action
         Intent snoozeIntent = AlarmStateManager.createStateChangeIntent(context,
                 AlarmStateManager.ALARM_SNOOZE_TAG, instance, AlarmInstance.SNOOZE_STATE);
@@ -233,6 +233,7 @@ TODO:
                 PendingIntent.FLAG_UPDATE_CURRENT);
         notification.addAction(R.drawable.ic_snooze_black,
                 resources.getString(R.string.alarm_alert_snooze_text), snoozePendingIntent);
+*/
 
         // Setup Dismiss Action
         Intent dismissIntent = AlarmStateManager.createStateChangeIntent(context,
@@ -242,7 +243,6 @@ TODO:
         notification.addAction(R.drawable.ic_alarm_off_black,
                 resources.getString(R.string.alarm_alert_dismiss_text),
                 dismissPendingIntent);
-*/
 
         // Setup Content Action
         Intent contentIntent = AlarmInstance.createIntent(context, MainActivity.class,

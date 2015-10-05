@@ -21,5 +21,6 @@
     <string name="alarm_missed_text"><xliff:g id="alarm_time">%s</xliff:g> - <xliff:g id="alarm_label">%s</xliff:g></string>
     <string name="alarm_missed_title">Missed alarm</string>
     <string name="alarm_alert_dismiss_now_text">Dismiss now</string>
+    <string name="alarm_alert_dismiss_text">Dismiss now</string>
 
 </resources>

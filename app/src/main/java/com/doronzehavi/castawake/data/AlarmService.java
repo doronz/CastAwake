@@ -1,6 +1,7 @@
 package com.doronzehavi.castawake.data;
 
 import android.app.Service;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
@@ -26,6 +27,8 @@ public class AlarmService extends Service {
     // Private action used to stop an alarm with this service.
     public static final String STOP_ALARM_ACTION = "STOP_ALARM";
 
+    private AlarmInstance mCurrentAlarm = null;
+
 
     @Override
     public void onCreate() {
@@ -35,12 +38,30 @@ public class AlarmService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         LogUtils.d(LogUtils.LOGTAG, "AlarmService started.");
+        long instanceId = AlarmInstance.getId(intent.getData());
         if (START_ALARM_ACTION.equals(intent.getAction())) {
-            LogUtils.d(LogUtils.LOGTAG, "Alarm started!");
+            LogUtils.d("Alarm started!");
+            ContentResolver cr = this.getContentResolver();
+            AlarmInstance instance = AlarmInstance.getInstance(cr, instanceId);
+            startAlarm(instance);
         }
 
 
         return super.onStartCommand(intent, flags, startId);
+    }
+
+
+    private void startAlarm(AlarmInstance instance) {
+        LogUtils.v("AlarmService.start with instance: " + instance.mId);
+        if (mCurrentAlarm != null) {
+            AlarmStateManager.setMissedState(this, mCurrentAlarm);
+            stopCurrentAlarm();
+        }
+
+        AlarmAlertWakeLock.acquireCpuWakeLock(this);
+        mCurrentAlarm = instance;
+        AlarmNotifications.showAlarmNotification(this, mCurrentAlarm);
+        sendBroadcast(new Intent(ALARM_ALERT_ACTION));
     }
 
     /**
@@ -75,7 +96,13 @@ public class AlarmService extends Service {
     }
 
     private void stopCurrentAlarm() {
+        if (mCurrentAlarm == null) {
+            LogUtils.v("There is no current alarm to stop");
+            return;
+        }
+        LogUtils.v("AlarmService.stop with instance: " + mCurrentAlarm.mId);
         sendBroadcast(new Intent(ALARM_DONE_ACTION));
+        mCurrentAlarm = null;
         AlarmAlertWakeLock.releaseCpuLock();
     }
 
@@ -83,7 +110,9 @@ public class AlarmService extends Service {
 
     @Override
     public void onDestroy() {
+        LogUtils.v("AlarmService.onDestroy() called");
         super.onDestroy();
+        stopCurrentAlarm();
     }
 
     @Nullable
