@@ -65,6 +65,7 @@ public class MediaRouterManager {
 
         @Override
         public void onRouteUnselected(MediaRouter router, RouteInfo route) {
+            mApiManager.teardown(false);
             mApiManager.setSelectedDevice(null);
         }
     }
