@@ -262,8 +262,6 @@ public class AlarmsListFragment extends Fragment implements
 
             public ViewHolder(View view) {
                 time = (TextView) view.findViewById(R.id.time);
-                dayOfWeek = (TextView) view.findViewById(R.id.day_of_week);
-                deleteAfterUse = (TextView) view.findViewById(R.id.delete_after_use);
                 alarmSwitch = (Switch) view.findViewById(R.id.alarm_switch);
             }
         }

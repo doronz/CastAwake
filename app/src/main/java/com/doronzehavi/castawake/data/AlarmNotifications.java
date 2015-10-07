@@ -226,7 +226,7 @@ public final class AlarmNotifications {
 
 /*      TODO
         // Setup Snooze Action
-        Intent snoozeIntent = AlarmStateManager.createStateChangeIntent(context,
+        Intent snoozeIntent = AlarmSta  teManager.createStateChangeIntent(context,
                 AlarmStateManager.ALARM_SNOOZE_TAG, instance, AlarmInstance.SNOOZE_STATE);
         PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(context, instance.hashCode(),
                 snoozeIntent,
