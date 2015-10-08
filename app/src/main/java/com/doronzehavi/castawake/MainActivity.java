@@ -1,25 +1,19 @@
 package com.doronzehavi.castawake;
 
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.MediaRouteActionProvider;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.doronzehavi.castawake.MediaRouting.MediaRouterManager;
 
-public class MainActivity extends SingleFragmentActivity  {
+public class MainActivity extends AppCompatActivity {
 
     private final String ALARMS_LIST_FRAGMENT_TAG = "ALFTAG";
     private MediaRouterManager mMediaRouterManager;
-
-
-    @Override
-    protected Fragment createFragment() {
-        return AlarmsListFragment.newInstance();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +25,7 @@ public class MainActivity extends SingleFragmentActivity  {
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, createFragment(), ALARMS_LIST_FRAGMENT_TAG)
+                    .add(R.id.fragment_container, AlarmsListFragment.newInstance(), ALARMS_LIST_FRAGMENT_TAG)
                     .commit();
         }
     }
