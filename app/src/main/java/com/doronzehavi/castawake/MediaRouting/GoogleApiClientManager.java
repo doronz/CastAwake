@@ -1,6 +1,7 @@
 package com.doronzehavi.castawake.MediaRouting;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.media.MediaRouter;
 
@@ -13,6 +14,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.gson.Gson;
 
 
 public class GoogleApiClientManager {
@@ -27,14 +29,17 @@ public class GoogleApiClientManager {
     private boolean mApplicationStarted;
     private boolean mWaitingForReconnect;
     private MediaRouter mMediaRouter;
+    SharedPreferences mPrefs;
 
     public GoogleApiClientManager(Context context, MediaRouter router) {
         mContext = context;
         mMediaRouter = router;
+        mPrefs = mContext.getSharedPreferences(Constants.ROUTE_PREF, Context.MODE_PRIVATE);
+
     }
 
-    public void setSelectedDevice(CastDevice selectedDevice) {
-        mSelectedDevice = selectedDevice;
+    public void setSelectedDevice(MediaRouter.RouteInfo routeInfo) {
+        if (routeInfo != null) saveSelectedDevice(routeInfo);
     }
 
     /**
@@ -55,6 +60,10 @@ public class GoogleApiClientManager {
             // Connect to Google Play services
             mConnectionCallbacks = new ApiConnectionCallbacks();
             mConnectionFailedListener = new ApiConnectionFailedListener();
+
+            if (mSelectedDevice == null) {
+                mSelectedDevice = loadSelectedDevice();
+            }
 
             Cast.CastOptions.Builder apiOptionsBuilder = Cast.CastOptions
                     .builder(mSelectedDevice, mCastListener);
@@ -91,6 +100,24 @@ public class GoogleApiClientManager {
         mSelectedDevice = null;
         mWaitingForReconnect = false;
         mSessionId = null;
+    }
+
+    private void saveSelectedDevice(MediaRouter.RouteInfo routeInfo) {
+        mSelectedDevice = CastDevice.getFromBundle(routeInfo.getExtras());
+
+
+        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(routeInfo.getExtras());
+        prefsEditor.putString(Constants.SELECTED_DEVICE_PREF, json);
+        prefsEditor.commit();
+    }
+
+    public CastDevice loadSelectedDevice() {
+        Gson gson = new Gson();
+        String json = mPrefs.getString(Constants.SELECTED_DEVICE_PREF, "");
+        CastDevice device = gson.fromJson(json, CastDevice.class);
+        return device;
     }
 
     private class ApiConnectionCallbacks implements
@@ -169,6 +196,5 @@ public class GoogleApiClientManager {
             teardown(false);
         }
     }
-
 
 }

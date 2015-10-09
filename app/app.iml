@@ -131,6 +131,7 @@
     <orderEntry type="library" exported="" name="support-annotations-23.0.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-appinvite-8.1.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-ads-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="gson-2.3" level="project" />
     <orderEntry type="library" exported="" name="play-services-appstate-8.1.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-gcm-8.1.0" level="project" />
     <orderEntry type="library" exported="" name="design-23.0.1" level="project" />
@@ -145,5 +146,6 @@
     <orderEntry type="library" exported="" name="play-services-fitness-8.1.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-wearable-8.1.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-plus-8.1.0" level="project" />
+    <orderEntry type="module" module-name="CastCompanionLibrary-android" exported="" />
   </component>
 </module>

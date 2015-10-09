@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 
 import com.doronzehavi.castawake.AlarmAlertWakeLock;
 import com.doronzehavi.castawake.LogUtils;
+import com.doronzehavi.castawake.MainActivity;
 
 /**
  * Manages starting and stopping of an alarm instance. Eventually should also
@@ -26,6 +27,7 @@ public class AlarmService extends Service {
 
     // Private action used to stop an alarm with this service.
     public static final String STOP_ALARM_ACTION = "STOP_ALARM";
+    public static final String CAST_ALARM_ACTION = "CAST_ALARM";
 
     private AlarmInstance mCurrentAlarm = null;
 
@@ -61,6 +63,10 @@ public class AlarmService extends Service {
         AlarmAlertWakeLock.acquireCpuWakeLock(this);
         mCurrentAlarm = instance;
         AlarmNotifications.showAlarmNotification(this, mCurrentAlarm);
+        Intent startAlarm = new Intent(this, MainActivity.class);
+        startAlarm.setAction(CAST_ALARM_ACTION);
+        startAlarm.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startAlarm);
         sendBroadcast(new Intent(ALARM_ALERT_ACTION));
     }
 

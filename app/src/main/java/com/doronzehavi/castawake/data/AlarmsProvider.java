@@ -15,7 +15,7 @@ import com.doronzehavi.castawake.data.AlarmContract.AlarmEntry;
 import com.doronzehavi.castawake.data.AlarmContract.AlarmInstance;
 
 /**
- * Content provider for CastAwake alarms
+ * Content provider for com.doronzehavi.castawake.CastAwake alarms
  */
 public class AlarmsProvider extends ContentProvider {
     // Used for query matching
