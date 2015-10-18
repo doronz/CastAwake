@@ -7,9 +7,9 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.doronzehavi.castawake.AlarmActivity;
 import com.doronzehavi.castawake.AlarmAlertWakeLock;
 import com.doronzehavi.castawake.LogUtils;
-import com.doronzehavi.castawake.MainActivity;
 
 /**
  * Manages starting and stopping of an alarm instance. Eventually should also
@@ -63,7 +63,7 @@ public class AlarmService extends Service {
         AlarmAlertWakeLock.acquireCpuWakeLock(this);
         mCurrentAlarm = instance;
         AlarmNotifications.showAlarmNotification(this, mCurrentAlarm);
-        Intent startAlarm = new Intent(this, MainActivity.class);
+        Intent startAlarm = new Intent(this, AlarmActivity.class);
         startAlarm.setAction(CAST_ALARM_ACTION);
         startAlarm.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(startAlarm);
