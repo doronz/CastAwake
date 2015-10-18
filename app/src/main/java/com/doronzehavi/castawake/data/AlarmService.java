@@ -40,16 +40,17 @@ public class AlarmService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         LogUtils.d(LogUtils.LOGTAG, "AlarmService started.");
-        long instanceId = AlarmInstance.getId(intent.getData());
-        if (START_ALARM_ACTION.equals(intent.getAction())) {
-            LogUtils.d("Alarm started!");
-            ContentResolver cr = this.getContentResolver();
-            AlarmInstance instance = AlarmInstance.getInstance(cr, instanceId);
-            startAlarm(instance);
+        if (intent != null) {
+            long instanceId = AlarmInstance.getId(intent.getData());
+            if (START_ALARM_ACTION.equals(intent.getAction())) {
+                LogUtils.d("Alarm started!");
+                ContentResolver cr = this.getContentResolver();
+                AlarmInstance instance = AlarmInstance.getInstance(cr, instanceId);
+                startAlarm(instance);
+            }
+
         }
-
-
-        return super.onStartCommand(intent, flags, startId);
+        return START_NOT_STICKY;
     }
 
 
