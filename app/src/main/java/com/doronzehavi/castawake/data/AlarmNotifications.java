@@ -81,13 +81,12 @@ public final class AlarmNotifications {
                 hideIntent, PendingIntent.FLAG_UPDATE_CURRENT));
 
         // Setup up dismiss action
-        //TODO:
-/*        Intent dismissIntent = AlarmStateManager.createStateChangeIntent(context,
+        Intent dismissIntent = AlarmStateManager.createStateChangeIntent(context,
                 AlarmStateManager.ALARM_DISMISS_TAG, instance, AlarmInstance.DISMISSED_STATE);
         notification.addAction(R.drawable.ic_alarm_off_black,
                 resources.getString(R.string.alarm_alert_dismiss_now_text),
                 PendingIntent.getBroadcast(context, instance.hashCode(),
-                        dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT));*/
+                        dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT));
 
         // Setup content action if instance is owned by alarm
         Intent viewAlarmIntent = createViewAlarmIntent(context, instance);
@@ -152,13 +151,12 @@ public final class AlarmNotifications {
                 .setLocalOnly(true);
 
         // Setup up dismiss action
-/*        TODO:
         Intent dismissIntent = AlarmStateManager.createStateChangeIntent(context,
                 AlarmStateManager.ALARM_DISMISS_TAG, instance, AlarmInstance.DISMISSED_STATE);
         notification.addAction(R.drawable.ic_alarm_off_black,
                 resources.getString(R.string.alarm_alert_dismiss_text),
                 PendingIntent.getBroadcast(context, instance.hashCode(),
-                        dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT));*/
+                        dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT));
 
         // Setup content action if instance is owned by alarm
         Intent viewAlarmIntent = createViewAlarmIntent(context, instance);
@@ -224,16 +222,15 @@ public final class AlarmNotifications {
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setLocalOnly(true);
 
-/*      TODO
         // Setup Snooze Action
-        Intent snoozeIntent = AlarmSta  teManager.createStateChangeIntent(context,
+        Intent snoozeIntent = AlarmStateManager.createStateChangeIntent(context,
                 AlarmStateManager.ALARM_SNOOZE_TAG, instance, AlarmInstance.SNOOZE_STATE);
         PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(context, instance.hashCode(),
                 snoozeIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         notification.addAction(R.drawable.ic_snooze_black,
                 resources.getString(R.string.alarm_alert_snooze_text), snoozePendingIntent);
-*/
+
 
         // Setup Dismiss Action
         Intent dismissIntent = AlarmStateManager.createStateChangeIntent(context,
