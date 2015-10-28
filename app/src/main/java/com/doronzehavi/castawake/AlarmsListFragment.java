@@ -52,6 +52,9 @@ public class AlarmsListFragment extends Fragment implements
         LogUtils.d("App started and fragment created");
         mAlarmAdapter = new AlarmsAdapter(getActivity(), null, 0);
         View v = inflater.inflate(R.layout.fragment_alarms_list, container, false);
+
+
+
         ListView listView = (ListView) v.findViewById(R.id.alarms_list);
         listView.setAdapter(mAlarmAdapter);
 

@@ -3,7 +3,9 @@ package com.doronzehavi.castawake;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -20,7 +22,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mCastManager = VideoCastManager.getInstance();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+
+                mCastManager = VideoCastManager.getInstance();
         mCastManagerHelper = new VideoCastManagerHelper(this, mCastManager);
 
         if (savedInstanceState == null) {
@@ -28,6 +34,11 @@ public class MainActivity extends AppCompatActivity {
                     .add(R.id.fragment_container, AlarmsListFragment.newInstance(), ALARMS_LIST_FRAGMENT_TAG)
                     .commit();
         }
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
     }
 
     @Override

@@ -1,18 +1,29 @@
 <resources>
 
+    <style name="FrameworkRoot.Theme" parent="Theme.AppCompat.NoActionBar" />
+    <style name="FrameworkRoot.Widget" parent="Theme.AppCompat.NoActionBar" />
 
-    <style name="AppTheme" parent="@style/CastAwake">
+    <!-- Immediate parent theme to specify base values for custom attributes -->
+    <style name="Theme" parent="FrameworkRoot.Theme">
+        <!-- Only needed for pre-L -->
+        <!--<item name="android:editTextBackground">@drawable/edit_text</item>-->
+        <!--<item name="android:editTextStyle">@style/Widget.IOSched.EditText</item>-->
     </style>
 
-    <style name="CastAwake" parent="@style/Theme.AppCompat">
-        <!--   your app branding color for the app bar -->
+    <style name="Theme.CastAwake" parent="Theme.CastAwake.Base"/>
+
+    <style name="Theme.CastAwake.Base" parent="Theme">
         <item name="colorPrimary">@color/colorPrimary</item>
-        <!--   darker variant for the status bar and contextual app bars -->
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <!--   theme UI controls like checkboxes and text fields -->
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowBackground">@color/window_background</item>
+        
     </style>
+
+    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:textColorPrimary">@color/white_69p</item>
+        <item name="android:textColorSecondary">@color/white_69p</item>
+    </style>
+
 
     <style name="no_alarms">
         <item name="android:textSize">@dimen/no_alarm_font_size</item>
