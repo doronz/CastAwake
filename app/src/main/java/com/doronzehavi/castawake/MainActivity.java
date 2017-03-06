@@ -3,19 +3,37 @@ package com.doronzehavi.castawake;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.gms.cast.framework.CastButtonFactory;
+import com.google.android.gms.cast.framework.CastContext;
+import com.google.android.gms.cast.framework.CastSession;
+import com.google.android.gms.cast.framework.CastState;
+import com.google.android.gms.cast.framework.CastStateListener;
+import com.google.android.gms.cast.framework.IntroductoryOverlay;
+import com.google.android.gms.cast.framework.Session;
+import com.google.android.gms.cast.framework.SessionManager;
+import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
 
 public class MainActivity extends AppCompatActivity {
 
     private final String ALARMS_LIST_FRAGMENT_TAG = "ALFTAG";
-    private VideoCastManager mCastManager;
-    private VideoCastManagerHelper mCastManagerHelper;
+    private CastStateListener mCastStateListener;
+    private CastContext mCastContext;
+    private CastSession mCastSession;
+    private IntroductoryOverlay mIntroductoryOverlay;
+    private MenuItem mediaRouteMenuItem;
+    private SessionManager mSessionManager;
+    private SessionManagerListenerImpl mSessionManagerListener = new SessionManagerListenerImpl();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,9 +43,10 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mCastContext = CastContext.getSharedInstance(this);
 
-                mCastManager = VideoCastManager.getInstance();
-        mCastManagerHelper = new VideoCastManagerHelper(this, mCastManager);
+        mSessionManager = CastContext.getSharedInstance(this).getSessionManager();
+
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
@@ -36,15 +55,48 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onAttachFragment(Fragment fragment) {
-        super.onAttachFragment(fragment);
+    private class SessionManagerListenerImpl implements SessionManagerListener {
+        @Override
+        public void onSessionStarted(Session session, String sessionId) {
+            invalidateOptionsMenu();
+        }
+        @Override
+        public void onSessionResumed(Session session, boolean wasSuspended) {
+            invalidateOptionsMenu();
+        }
+        @Override
+        public void onSessionEnded(Session session, int error) {
+            finish();
+        }
+        @Override
+        public void onSessionStarting(Session session) {
+
+        }
+        @Override
+        public void onSessionStartFailed(Session session, int i) {
+        }
+        @Override
+        public void onSessionEnding(Session session) {
+        }
+        @Override
+        public void onSessionResumeFailed(Session session, int i) {
+        }
+        @Override
+        public void onSessionSuspended(Session session, int i) {
+        }
+        @Override
+        public void onSessionResuming(Session session, String s) {
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        mCastManager.addMediaRouterButton(menu, R.id.media_route_menu_item);
+        CastButtonFactory.setUpMediaRouteButton(getApplicationContext(),
+                menu,
+                R.id.media_route_menu_item);
+
+
         return true;
     }
 
@@ -62,10 +114,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean dispatchKeyEvent(@NonNull KeyEvent event) {
+        return mCastContext.onDispatchVolumeKeyEventBeforeJellyBean(event)
+                || super.dispatchKeyEvent(event);
+    }
+
+
+    @Override
     protected void onResume() {
+        mCastSession = mSessionManager.getCurrentCastSession();
+        mSessionManager.addSessionManagerListener(mSessionManagerListener);
         super.onResume();
-        mCastManager = VideoCastManager.getInstance();
-        mCastManager.incrementUiCounter();
     }
 
     @Override
@@ -76,11 +135,68 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        mCastManager.decrementUiCounter();
+        mSessionManager.removeSessionManagerListener(mSessionManagerListener);
+        mCastSession = null;
+
     }
 
     @Override
     public void onStop() {
         super.onStop();
     }
+
+
+
+    private class MySessionManagerListener implements SessionManagerListener<CastSession> {
+
+        @Override
+        public void onSessionEnded(CastSession castSession, int i) {
+
+        }
+
+
+        @Override
+        public void onSessionResumed(CastSession session, boolean wasSuspended) {
+
+        }
+
+        @Override
+        public void onSessionStarted(CastSession session, String sessionId) {
+
+        }
+
+        @Override
+        public void onSessionStarting(CastSession castSession) {
+
+        }
+
+
+        @Override
+        public void onSessionStartFailed(CastSession castSession, int i) {
+
+        }
+
+        @Override
+        public void onSessionEnding(CastSession castSession) {
+
+        }
+
+
+        @Override
+        public void onSessionResuming(CastSession castSession, String s) {
+
+        }
+
+        @Override
+        public void onSessionResumeFailed(CastSession castSession, int i) {
+
+        }
+
+        @Override
+        public void onSessionSuspended(CastSession castSession, int i) {
+
+        }
+    }
 }
+
+

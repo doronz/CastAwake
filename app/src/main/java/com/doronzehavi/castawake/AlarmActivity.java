@@ -8,15 +8,14 @@ import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
 
 public class AlarmActivity extends AppCompatActivity {
     private VideoCastManager mCastManager;
-    private VideoCastManagerHelper mCastManagerHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
         mCastManager = VideoCastManager.getInstance();
-        mCastManagerHelper = new VideoCastManagerHelper(this, mCastManager);
-        mCastManagerHelper.launchAppIfPossible(10);
+
     }
 
     @Override

@@ -24,7 +24,8 @@ import android.util.Log;
 
 public class LogUtils {
 
-    public final static String LOGTAG = "com.doronzehavi.castawake.CastAwake";
+    // The logging tag can be at most 23 characters, was 35 (com.doronzehavi.castawake.CastAwake)
+    public final static String LOGTAG = "CastAwake";
 
     public static void v(String message, Object... args) {
         Log.v(LOGTAG, args == null ? message : String.format(message, args));
