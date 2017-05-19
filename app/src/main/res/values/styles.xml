@@ -1,10 +1,29 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="@style/CastAwake">
-        <!-- Customize your theme here. -->
-        <item name="android:windowBackground">@color/window_background</item>
+    <style name="FrameworkRoot.Theme" parent="Theme.AppCompat.NoActionBar" />
+    <style name="FrameworkRoot.Widget" parent="Theme.AppCompat.NoActionBar" />
+
+    <!-- Immediate parent theme to specify base values for custom attributes -->
+    <style name="Theme" parent="FrameworkRoot.Theme">
+        <!-- Only needed for pre-L -->
+        <!--<item name="android:editTextBackground">@drawable/edit_text</item>-->
+        <!--<item name="android:editTextStyle">@style/Widget.IOSched.EditText</item>-->
     </style>
+
+    <style name="Theme.CastAwake" parent="Theme.CastAwake.Base"/>
+
+    <style name="Theme.CastAwake.Base" parent="Theme">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        
+    </style>
+
+    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:textColorPrimary">@color/white_69p</item>
+        <item name="android:textColorSecondary">@color/white_69p</item>
+    </style>
+
 
     <style name="no_alarms">
         <item name="android:textSize">@dimen/no_alarm_font_size</item>
@@ -39,12 +58,5 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="CastAwake" parent="@style/Theme.AppCompat">
-        <item name="colorPrimary">@color/primary_material_dark_1</item>
-        <item name="android:actionBarStyle">@style/ActionBarStyle</item>
-    </style>
 
-    <style name="ActionBarStyle"  parent="@style/Widget.AppCompat.ActionBar">
-        <item name="android:background">@color/colorPrimary</item>
-    </style>
 </resources>

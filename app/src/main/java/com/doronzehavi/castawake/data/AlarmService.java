@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.doronzehavi.castawake.AlarmActivity;
 import com.doronzehavi.castawake.AlarmAlertWakeLock;
 import com.doronzehavi.castawake.LogUtils;
 
@@ -26,6 +27,7 @@ public class AlarmService extends Service {
 
     // Private action used to stop an alarm with this service.
     public static final String STOP_ALARM_ACTION = "STOP_ALARM";
+    public static final String CAST_ALARM_ACTION = "CAST_ALARM";
 
     private AlarmInstance mCurrentAlarm = null;
 
@@ -38,16 +40,17 @@ public class AlarmService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         LogUtils.d(LogUtils.LOGTAG, "AlarmService started.");
-        long instanceId = AlarmInstance.getId(intent.getData());
-        if (START_ALARM_ACTION.equals(intent.getAction())) {
-            LogUtils.d("Alarm started!");
-            ContentResolver cr = this.getContentResolver();
-            AlarmInstance instance = AlarmInstance.getInstance(cr, instanceId);
-            startAlarm(instance);
+        if (intent != null) {
+            long instanceId = AlarmInstance.getId(intent.getData());
+            if (START_ALARM_ACTION.equals(intent.getAction())) {
+                LogUtils.d("Alarm started!");
+                ContentResolver cr = this.getContentResolver();
+                AlarmInstance instance = AlarmInstance.getInstance(cr, instanceId);
+                startAlarm(instance);
+            }
+
         }
-
-
-        return super.onStartCommand(intent, flags, startId);
+        return START_NOT_STICKY;
     }
 
 
@@ -61,6 +64,10 @@ public class AlarmService extends Service {
         AlarmAlertWakeLock.acquireCpuWakeLock(this);
         mCurrentAlarm = instance;
         AlarmNotifications.showAlarmNotification(this, mCurrentAlarm);
+        Intent startAlarm = new Intent(this, AlarmActivity.class);
+        startAlarm.setAction(CAST_ALARM_ACTION);
+        startAlarm.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startAlarm);
         sendBroadcast(new Intent(ALARM_ALERT_ACTION));
     }
 

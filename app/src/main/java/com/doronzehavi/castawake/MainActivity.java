@@ -1,27 +1,33 @@
 package com.doronzehavi.castawake;
 
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.MediaRouteActionProvider;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.doronzehavi.castawake.MediaRouting.MediaRouterManager;
+import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
 
 public class MainActivity extends AppCompatActivity {
 
     private final String ALARMS_LIST_FRAGMENT_TAG = "ALFTAG";
-    private MediaRouterManager mMediaRouterManager;
+    private VideoCastManager mCastManager;
+    private VideoCastManagerHelper mCastManagerHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mMediaRouterManager = new MediaRouterManager(this);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
+
+                mCastManager = VideoCastManager.getInstance();
+        mCastManagerHelper = new VideoCastManagerHelper(this, mCastManager);
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
@@ -31,35 +37,50 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        // Attach the MediaRouteSelector to the menu item
-        MenuItem mediaRouteMenuItem = menu.findItem(R.id.media_route_menu_item);
-        MediaRouteActionProvider mediaRouteActionProvider =
-                (MediaRouteActionProvider) MenuItemCompat.getActionProvider(
-                        mediaRouteMenuItem);
-        mediaRouteActionProvider.setRouteSelector(mMediaRouterManager.getSelector());
-
+        mCastManager.addMediaRouterButton(menu, R.id.media_route_menu_item);
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.settings_menu_item:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mCastManager = VideoCastManager.getInstance();
+        mCastManager.incrementUiCounter();
+    }
 
     @Override
     public void onStart() {
-        // Add the callback on start to tell the media router what kinds of routes
-        // your app works with so the framework can discover them.
-        mMediaRouterManager.addCallback();
         super.onStart();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mCastManager.decrementUiCounter();
+    }
 
     @Override
     public void onStop() {
-        // Remove the selector on stop to tell the media router that it no longer
-        // needs to discover routes for your app.
-        mMediaRouterManager.removeCallback();
         super.onStop();
     }
 }

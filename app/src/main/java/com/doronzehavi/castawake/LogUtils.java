@@ -24,7 +24,7 @@ import android.util.Log;
 
 public class LogUtils {
 
-    public final static String LOGTAG = "CastAwake";
+    public final static String LOGTAG = "com.doronzehavi.castawake.CastAwake";
 
     public static void v(String message, Object... args) {
         Log.v(LOGTAG, args == null ? message : String.format(message, args));

@@ -40,6 +40,7 @@ public class AlarmsListFragment extends Fragment implements
     private static final int ALARMS_LOADER = 0;
     private AlarmsAdapter mAlarmAdapter;
     private FloatingActionButton mFab;
+    private Alarm mSelectedAlarm;
 
     public static Fragment newInstance() {
         return new AlarmsListFragment();
@@ -51,6 +52,9 @@ public class AlarmsListFragment extends Fragment implements
         LogUtils.d("App started and fragment created");
         mAlarmAdapter = new AlarmsAdapter(getActivity(), null, 0);
         View v = inflater.inflate(R.layout.fragment_alarms_list, container, false);
+
+
+
         ListView listView = (ListView) v.findViewById(R.id.alarms_list);
         listView.setAdapter(mAlarmAdapter);
 
@@ -109,6 +113,11 @@ public class AlarmsListFragment extends Fragment implements
 
     private void startCreatingAlarm(){
         AlarmUtils.showTimeEditDialog(this, null);
+    }
+
+    private void updateAlarmTime(Alarm alarm){
+        mSelectedAlarm = alarm;
+        AlarmUtils.showTimeEditDialog(this, alarm);
     }
 
     private void asyncAddAlarm(final Alarm alarm){
@@ -200,16 +209,24 @@ public class AlarmsListFragment extends Fragment implements
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        Alarm a = new Alarm();
-        a.alert = RingtoneManager.getActualDefaultRingtoneUri(getActivity(),
-                RingtoneManager.TYPE_ALARM);
-        if (a.alert == null) {
-            a.alert = Uri.parse("content://settings/system/alarm_alert");
+        if (mSelectedAlarm == null) {
+            Alarm a = new Alarm();
+            a.alert = RingtoneManager.getActualDefaultRingtoneUri(getActivity(),
+                    RingtoneManager.TYPE_ALARM);
+            if (a.alert == null) {
+                a.alert = Uri.parse("content://settings/system/alarm_alert");
+            }
+            a.hour = hourOfDay;
+            a.minutes = minute;
+            a.enabled = true;
+            asyncAddAlarm(a);
+        } else {
+            mSelectedAlarm.hour = hourOfDay;
+            mSelectedAlarm.minutes = minute;
+            mSelectedAlarm.enabled = true;
+            asyncUpdateAlarm(mSelectedAlarm, true);
+            mSelectedAlarm = null;
         }
-        a.hour = hourOfDay;
-        a.minutes = minute;
-        a.enabled = true;
-        asyncAddAlarm(a);
     }
 
     public class AlarmsAdapter extends CursorAdapter {
@@ -234,6 +251,12 @@ public class AlarmsListFragment extends Fragment implements
             cal.set(Calendar.HOUR_OF_DAY, alarm.hour);
             cal.set(Calendar.MINUTE, alarm.minutes);
             vh.time.setText(AlarmUtils.getFormattedTime(context, cal));
+            vh.time.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    updateAlarmTime(alarm);
+                }
+            });
 
             // We must unset the listener first because this maybe a recycled view so changing the
             // state would affect the wrong alarm.

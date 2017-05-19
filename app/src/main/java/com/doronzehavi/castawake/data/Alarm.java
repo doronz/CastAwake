@@ -54,7 +54,6 @@ public class Alarm implements AlarmContract.AlarmEntry {
     private static final int COLUMN_COUNT = DELETE_AFTER_USE_INDEX + 1;
 
     // Public fields
-    // TODO: Refactor instance names
     public long id;
     public boolean enabled;
     public int hour;

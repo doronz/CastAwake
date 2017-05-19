@@ -8,7 +8,6 @@ import android.support.v7.media.MediaRouter;
 import android.support.v7.media.MediaRouter.RouteInfo;
 
 import com.doronzehavi.castawake.Constants;
-import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.CastMediaControlIntent;
 
 public class MediaRouterManager {
@@ -38,10 +37,14 @@ public class MediaRouterManager {
         mApiManager = new GoogleApiClientManager(mContext, mMediaRouter);
     }
 
+    public void launchApp() {
+        mApiManager.launchReceiver();
+    }
+
+
     public MediaRouteSelector getSelector() {
         return mSelector;
     }
-
 
     public void addCallback() {
         mMediaRouter.addCallback(mSelector, mCallback,
@@ -59,16 +62,18 @@ public class MediaRouterManager {
             if (route.getPlaybackType() == RouteInfo.PLAYBACK_TYPE_LOCAL) {
                 return;
             }
-            mApiManager.setSelectedDevice(CastDevice.getFromBundle(route.getExtras()));
+
+            mApiManager.setSelectedDevice(route);
             mApiManager.launchReceiver();
         }
 
         @Override
         public void onRouteUnselected(MediaRouter router, RouteInfo route) {
-            mApiManager.teardown(false);
-            mApiManager.setSelectedDevice(null);
+            //mApiManager.teardown(false);
+            //mApiManager.setSelectedDevice(null);
         }
     }
+
 
 
 }
